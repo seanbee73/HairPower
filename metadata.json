@@ -1,0 +1,6 @@
+{
+  "name": "Hair Power",
+  "description": "Hair Power is Oxford County's premier eco-friendly beauty salon in Woodstock, Ontario. Offering master haircuts, creative color, balayage, foil highlights, bridal updos, and Green Circle sustainable beauty care.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
