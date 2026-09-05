@@ -17,9 +17,52 @@ import { SALON_INFO, SERVICES_DATA, GALLERY_DATA, INITIAL_INQUIRIES } from './da
 import { SalonInfo, ServiceItem, GalleryItem, CustomerInquiry } from './types';
 
 export default function App() {
-  const [salonInfo, setSalonInfo] = useState<SalonInfo>(SALON_INFO);
-  const [services, setServices] = useState<ServiceItem[]>(SERVICES_DATA);
-  const [gallery, setGallery] = useState<GalleryItem[]>(GALLERY_DATA);
+  const [salonInfo, setSalonInfo] = useState<SalonInfo>(() => {
+    try {
+      const saved = localStorage.getItem('hairpower_salon_info') || localStorage.getItem('spencer_salon_info');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...SALON_INFO,
+          ...parsed,
+          heroImageUrl: parsed.heroImageUrl || SALON_INFO.heroImageUrl,
+          founderImageUrl: parsed.founderImageUrl || SALON_INFO.founderImageUrl
+        };
+      }
+    } catch (e) {
+      console.error('Failed to load salon info from localStorage:', e);
+    }
+    return SALON_INFO;
+  });
+
+  const [services, setServices] = useState<ServiceItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('hairpower_salon_services') || localStorage.getItem('spencer_salon_services');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to load services from localStorage:', e);
+    }
+    return SERVICES_DATA;
+  });
+
+  const [gallery, setGallery] = useState<GalleryItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('hairpower_salon_gallery') || localStorage.getItem('spencer_salon_gallery');
+      if (saved) {
+        const parsed: GalleryItem[] = JSON.parse(saved);
+        return parsed.map(item => {
+          if (item.id === 'gallery-5' || item.category === 'Interior' || item.imageUrl.includes('photo-1605980776566-0486c3ac7617')) {
+            return { ...item, imageUrl: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg' };
+          }
+          return item;
+        });
+      }
+    } catch (e) {
+      console.error('Failed to load gallery from localStorage:', e);
+    }
+    return GALLERY_DATA;
+  });
+
   const [inquiries, setInquiries] = useState<CustomerInquiry[]>(() => {
     try {
       const saved = localStorage.getItem('hairpower_customer_inquiries');
@@ -38,7 +81,31 @@ export default function App() {
   const [isSeoOpen, setIsSeoOpen] = useState<boolean>(false);
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
 
-  // Sync inquiries with localStorage
+  // Sync state with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('hairpower_salon_info', JSON.stringify(salonInfo));
+    } catch (err) {
+      console.error('Failed to save salonInfo to localStorage:', err);
+    }
+  }, [salonInfo]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hairpower_salon_services', JSON.stringify(services));
+    } catch (err) {
+      console.error('Failed to save services to localStorage:', err);
+    }
+  }, [services]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('hairpower_salon_gallery', JSON.stringify(gallery));
+    } catch (err) {
+      console.error('Failed to save gallery to localStorage:', err);
+    }
+  }, [gallery]);
+
   useEffect(() => {
     try {
       localStorage.setItem('hairpower_customer_inquiries', JSON.stringify(inquiries));
@@ -56,6 +123,9 @@ export default function App() {
     setServices(SERVICES_DATA);
     setGallery(GALLERY_DATA);
     setInquiries(INITIAL_INQUIRIES);
+    localStorage.removeItem('hairpower_salon_info');
+    localStorage.removeItem('hairpower_salon_services');
+    localStorage.removeItem('hairpower_salon_gallery');
     localStorage.removeItem('spencer_salon_info');
     localStorage.removeItem('spencer_salon_services');
     localStorage.removeItem('spencer_salon_gallery');

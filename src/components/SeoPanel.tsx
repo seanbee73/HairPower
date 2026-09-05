@@ -120,7 +120,7 @@ export const SeoPanel: React.FC<SeoPanelProps> = ({ isOpen, onClose }) => {
 
             <div className="bg-[#262626] border border-stone-700 rounded overflow-hidden max-w-sm mx-auto shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop"
+                src="https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg"
                 alt="Social Card Preview"
                 className="w-full h-40 object-cover"
               />

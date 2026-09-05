@@ -3,6 +3,54 @@ import { SalonInfo, ServiceItem, GalleryItem, CustomerInquiry } from '../types';
 import { Icon } from './Icon';
 import { InquiriesManager } from './InquiriesManager';
 import { AdminAuth } from './AdminAuth';
+import { GalleryPhotoModal } from './GalleryPhotoModal';
+import { PhotoFieldController, PhotoPreset } from './PhotoFieldController';
+
+const HERO_PHOTO_PRESETS: PhotoPreset[] = [
+  {
+    label: 'Woodstock Modern Salon Interior',
+    url: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg',
+    description: 'Clean lit circular mirrors & modern styling stations.'
+  },
+  {
+    label: 'Warm Luxury Stations & Mirrors',
+    url: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?q=80&w=2002&auto=format&fit=crop',
+    description: 'Bright styling atmosphere with elegant ambient glow.'
+  },
+  {
+    label: 'Minimalist Salon Suite',
+    url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
+    description: 'Crisp contemporary salon aesthetic.'
+  },
+  {
+    label: 'Spa & Treatment Wash Basins',
+    url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=2069&auto=format&fit=crop',
+    description: 'Relaxing hair wash & restorative treatment lounge.'
+  }
+];
+
+const FOUNDER_PHOTO_PRESETS: PhotoPreset[] = [
+  {
+    label: 'Master Stylist at Work (Default)',
+    url: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop',
+    description: 'Stylist precision cutting in modern salon environment.'
+  },
+  {
+    label: 'Precision Barber & Razor Craft',
+    url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop',
+    description: 'Classic razor grooming and precision scissor work.'
+  },
+  {
+    label: 'Italian Heritage Salon Craft',
+    url: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1978&auto=format&fit=crop',
+    description: '35+ years heritage styling and blowdry perfection.'
+  },
+  {
+    label: 'Creative Color & Balayage Artisan',
+    url: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=2069&auto=format&fit=crop',
+    description: 'Artisan colorist creating dimensional blonde tones.'
+  }
+];
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -107,14 +155,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [isAddingGallery, setIsAddingGallery] = useState(false);
   const [galleryCategoryFilter, setGalleryCategoryFilter] = useState<string>('all');
 
-  const [newGalleryForm, setNewGalleryForm] = useState<Omit<GalleryItem, 'id'>>({
-    title: '',
-    category: 'Styling',
-    imageUrl: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
-    description: '',
-    heightClass: 'h-auto'
-  });
-
   // --- Data Import JSON State ---
   const [importJsonText, setImportJsonText] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
@@ -137,46 +177,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     { label: 'Crown', name: 'solar:crown-minimalistic-linear' },
     { label: 'Sparkle Star', name: 'solar:magic-stick-3-linear' },
     { label: 'Comb/Brush', name: 'solar:tuning-linear' }
-  ];
-
-  // Curated Unsplash Beauty Preset Images
-  const GALLERY_IMAGE_PRESETS = [
-    {
-      title: 'Goddess Knotless Braids',
-      category: 'Braids & Twists' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?q=80&w=2002&auto=format&fit=crop',
-      description: 'Neat & lightweight goddess braids with curls.'
-    },
-    {
-      title: 'Hollywood Silk Press',
-      category: 'Styling' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1978&auto=format&fit=crop',
-      description: 'High-shine glass finish silk press.'
-    },
-    {
-      title: 'Bronzed Bridal Glam',
-      category: 'Glam Makeup' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=2069&auto=format&fit=crop',
-      description: 'Sweatproof wedding makeup with soft glow.'
-    },
-    {
-      title: 'Honey Blonde Balayage',
-      category: 'Color' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=2069&auto=format&fit=crop',
-      description: 'Seamless dimensional blonde highlights.'
-    },
-    {
-      title: 'Luxury Styling Station',
-      category: 'Interior' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1605980776566-0486c3ac7617?q=80&w=2059&auto=format&fit=crop',
-      description: 'Clean luxury interior at Blohum Road.'
-    },
-    {
-      title: 'Crown Bridal Updo',
-      category: 'Bridal' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1780&auto=format&fit=crop',
-      description: 'Classic wedding updo with veil.'
-    }
   ];
 
   // --- Handlers: Salon Info ---
@@ -242,36 +242,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // --- Handlers: Gallery ---
-  const handleSaveGalleryEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingGalleryItem) return;
-    const updated = gallery.map(item => item.id === editingGalleryItem.id ? editingGalleryItem : item);
-    onUpdateGallery(updated);
-    setEditingGalleryItem(null);
-    showNotification(`Gallery image "${editingGalleryItem.title}" updated!`);
-  };
-
-  const handleCreateGalleryItem = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newId = 'gallery-' + Date.now();
-    const itemToAdd: GalleryItem = {
-      ...newGalleryForm,
-      id: newId
-    };
-    onUpdateGallery([itemToAdd, ...gallery]);
-    setIsAddingGallery(false);
-    setNewGalleryForm({
-      title: '',
-      category: 'Styling',
-      imageUrl: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
-      description: '',
-      heightClass: 'h-auto'
-    });
-    showNotification('New image added to portfolio gallery!');
+  const handleSaveGalleryPhoto = (photoData: Omit<GalleryItem, 'id'>, id?: string) => {
+    if (id) {
+      // Edit existing photo
+      const updated = gallery.map(item => (item.id === id ? { ...photoData, id } : item));
+      onUpdateGallery(updated);
+      setEditingGalleryItem(null);
+      setIsAddingGallery(false);
+      showNotification(`Gallery photo "${photoData.title}" updated successfully!`);
+    } else {
+      // Create new photo
+      const newId = 'gallery-' + Date.now();
+      const newItem: GalleryItem = {
+        ...photoData,
+        id: newId
+      };
+      onUpdateGallery([newItem, ...gallery]);
+      setIsAddingGallery(false);
+      setEditingGalleryItem(null);
+      showNotification(`New photo "${photoData.title}" added to portfolio gallery!`);
+    }
   };
 
   const handleDeleteGalleryItem = (id: string, title: string) => {
-    if (window.confirm(`Delete photo "${title}" from gallery?`)) {
+    if (window.confirm(`Are you sure you want to delete photo "${title}" from the gallery?`)) {
       const filtered = gallery.filter(item => item.id !== id);
       onUpdateGallery(filtered);
       showNotification(`Photo "${title}" deleted.`);
@@ -446,7 +440,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 }`}
               >
                 <Icon name="solar:shop-linear" className="text-base" />
-                <span>2. Salon Info & Hours</span>
+                <span>2. Salon Info & Featured Photos</span>
               </button>
 
               <button
@@ -706,6 +700,47 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
                     />
                   </div>
+                </div>
+
+                {/* Featured Imagery & Photography Controls */}
+                <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-6">
+                  <div className="border-b border-stone-800 pb-3 flex items-center justify-between">
+                    <h3 className="font-serif text-lg text-[#C5A065] flex items-center gap-2">
+                      <Icon name="solar:camera-linear" />
+                      <span>Featured Website Photography & Hero Shots</span>
+                    </h3>
+                    <span className="text-xs text-stone-400">
+                      Edit hero background & founder portrait independently
+                    </span>
+                  </div>
+
+                  {/* 1. Hero Main Background Shot */}
+                  <PhotoFieldController
+                    id="hero-shot-field"
+                    title="1. Homepage Hero Main Background Shot"
+                    subtitle="Displays across the entire full-screen hero section on desktop & mobile."
+                    badge="Hero Banner"
+                    value={infoForm.heroImageUrl || 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg'}
+                    defaultValue="https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg"
+                    aspectRatio="video"
+                    presets={HERO_PHOTO_PRESETS}
+                    onChange={(url) => setInfoForm({ ...infoForm, heroImageUrl: url })}
+                    onNotification={showNotification}
+                  />
+
+                  {/* 2. Lead Stylist & Founder Shot */}
+                  <PhotoFieldController
+                    id="founder-shot-field"
+                    title="2. Lead Stylist & Founder Portrait Shot"
+                    subtitle="Displays in the 'About Us' section next to the salon history & 35-year story."
+                    badge="About Us Showcase"
+                    value={infoForm.founderImageUrl || 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop'}
+                    defaultValue="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop"
+                    aspectRatio="portrait"
+                    presets={FOUNDER_PHOTO_PRESETS}
+                    onChange={(url) => setInfoForm({ ...infoForm, founderImageUrl: url })}
+                    onNotification={showNotification}
+                  />
                 </div>
 
                 <div className="pt-2">
@@ -1140,329 +1175,133 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="space-y-6 animate-fadeIn">
               
               {/* Category Filter & Add Button */}
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-900/60 p-4 border border-stone-800 rounded">
-                <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-                  {['all', 'Styling', 'Braids & Twists', 'Glam Makeup', 'Color', 'Interior', 'Bridal'].map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setGalleryCategoryFilter(cat)}
-                      className={`px-3 py-1 text-xs font-medium rounded-full uppercase tracking-wider transition-all whitespace-nowrap ${
-                        galleryCategoryFilter === cat
-                          ? 'bg-[#C5A065] text-stone-950 font-bold'
-                          : 'bg-stone-800 text-stone-400 hover:text-stone-200'
-                      }`}
-                    >
-                      {cat === 'all' ? 'All Portfolio' : cat}
-                    </button>
-                  ))}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-900/60 p-4 border border-stone-800 rounded-lg">
+                <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+                  {['all', 'Cutting', 'Color', 'Styling', 'Bridal', 'Grooming', 'Interior'].map(cat => {
+                    const count = cat === 'all' ? gallery.length : gallery.filter(g => g.category.toLowerCase() === cat.toLowerCase() || g.category.includes(cat)).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setGalleryCategoryFilter(cat)}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                          galleryCategoryFilter === cat
+                            ? 'bg-[#C5A065] text-stone-950 font-bold shadow-sm'
+                            : 'bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-700/80'
+                        }`}
+                      >
+                        <span>{cat === 'all' ? 'All Portfolio' : cat}</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${galleryCategoryFilter === cat ? 'bg-stone-950/20 text-stone-950' : 'bg-stone-900 text-stone-400'}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <button
-                  onClick={() => setIsAddingGallery(true)}
-                  className="px-4 py-2 bg-[#C5A065] text-stone-950 hover:bg-[#B08955] text-xs font-semibold uppercase tracking-wider rounded transition-all flex items-center gap-1.5 shadow-sm"
+                  type="button"
+                  id="admin-add-gallery-photo-btn"
+                  onClick={() => {
+                    setEditingGalleryItem(null);
+                    setIsAddingGallery(true);
+                  }}
+                  className="px-4 py-2.5 bg-[#C5A065] text-stone-950 hover:bg-[#B08955] text-xs font-bold uppercase tracking-wider rounded transition-all flex items-center gap-2 shadow-md hover:shadow-lg w-full md:w-auto justify-center cursor-pointer"
                 >
-                  <Icon name="solar:add-circle-linear" className="text-base" />
-                  <span>Add Gallery Image</span>
+                  <Icon name="solar:gallery-add-linear" className="text-base" />
+                  <span>Add Photo to Gallery</span>
                 </button>
               </div>
 
-              {/* Add Gallery Form */}
-              {isAddingGallery && (
-                <form onSubmit={handleCreateGalleryItem} className="p-6 bg-stone-900 border border-[#C5A065]/50 rounded space-y-4 animate-fadeIn">
-                  <div className="flex justify-between items-center border-b border-stone-800 pb-3">
-                    <h3 className="font-serif text-lg text-[#C5A065] font-medium flex items-center gap-2">
-                      <Icon name="solar:gallery-add-linear" />
-                      <span>Add Image to Salon Gallery</span>
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setIsAddingGallery(false)}
-                      className="text-stone-400 hover:text-white text-xs"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-
-                  {/* Preset Quick Chooser */}
-                  <div className="space-y-2">
-                    <p className="text-xs uppercase tracking-wider text-stone-400 font-medium">
-                      Or Choose From High-Res Salon Stock Presets:
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
-                      {GALLERY_IMAGE_PRESETS.map((preset, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setNewGalleryForm({
-                            title: preset.title,
-                            category: preset.category,
-                            imageUrl: preset.imageUrl,
-                            description: preset.description,
-                            heightClass: 'h-72'
-                          })}
-                          className="cursor-pointer group relative rounded border border-stone-800 overflow-hidden hover:border-[#C5A065] transition-all"
-                        >
-                          <img src={preset.imageUrl} alt={preset.title} className="h-20 w-full object-cover group-hover:scale-105 transition-transform" />
-                          <div className="p-1 bg-stone-950 text-[10px] text-stone-300 truncate font-medium">
-                            {preset.title}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Look Title *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Honey Highlights & Loose Curls"
-                        value={newGalleryForm.title}
-                        onChange={e => setNewGalleryForm({ ...newGalleryForm, title: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Category
-                      </label>
-                      <select
-                        value={newGalleryForm.category}
-                        onChange={e => setNewGalleryForm({ ...newGalleryForm, category: e.target.value as any })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                      >
-                        <option value="Styling">Styling</option>
-                        <option value="Braids & Twists">Braids & Twists</option>
-                        <option value="Glam Makeup">Glam Makeup</option>
-                        <option value="Color">Color</option>
-                        <option value="Interior">Interior</option>
-                        <option value="Bridal">Bridal</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Card Height Aspect
-                      </label>
-                      <select
-                        value={newGalleryForm.heightClass || 'h-auto'}
-                        onChange={e => setNewGalleryForm({ ...newGalleryForm, heightClass: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                      >
-                        <option value="h-auto">Auto Standard</option>
-                        <option value="h-64">Compact (256px)</option>
-                        <option value="h-72">Medium (288px)</option>
-                        <option value="h-80">Tall (320px)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                      Image URL (Unsplash or Direct Link) *
-                    </label>
-                    <input
-                      type="url"
-                      required
-                      value={newGalleryForm.imageUrl}
-                      onChange={e => setNewGalleryForm({ ...newGalleryForm, imageUrl: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none font-mono text-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                      Styling Notes / Description
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Special details about product used, client hair texture, etc."
-                      value={newGalleryForm.description}
-                      onChange={e => setNewGalleryForm({ ...newGalleryForm, description: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                    />
-                  </div>
-
-                  {/* Thumbnail Preview */}
-                  {newGalleryForm.imageUrl && (
-                    <div className="flex items-center gap-4 bg-stone-950 p-3 rounded border border-stone-800">
-                      <img
-                        src={newGalleryForm.imageUrl}
-                        alt="Preview"
-                        className="w-20 h-20 object-cover rounded border border-stone-700"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop';
-                        }}
-                      />
-                      <div>
-                        <p className="text-xs font-semibold text-stone-200">Image Live Preview</p>
-                        <p className="text-[10px] text-stone-500">{newGalleryForm.title || 'Untitled'}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="pt-2 flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAddingGallery(false)}
-                      className="px-4 py-2 bg-stone-800 text-stone-300 text-xs font-semibold uppercase rounded hover:bg-stone-700"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-2 bg-[#C5A065] text-stone-950 text-xs font-semibold uppercase tracking-wider rounded hover:bg-[#B08955] shadow"
-                    >
-                      Add Photo to Gallery
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {/* Edit Gallery Item Modal */}
-              {editingGalleryItem && (
-                <form onSubmit={handleSaveGalleryEdit} className="p-6 bg-stone-900 border border-[#C5A065] rounded space-y-4 animate-fadeIn">
-                  <div className="flex justify-between items-center border-b border-stone-800 pb-3">
-                    <h3 className="font-serif text-lg text-[#C5A065] font-medium flex items-center gap-2">
-                      <Icon name="solar:pen-2-linear" />
-                      <span>Edit Gallery Photo: {editingGalleryItem.title}</span>
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setEditingGalleryItem(null)}
-                      className="text-stone-400 hover:text-white text-xs"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={editingGalleryItem.title}
-                        onChange={e => setEditingGalleryItem({ ...editingGalleryItem, title: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Category
-                      </label>
-                      <select
-                        value={editingGalleryItem.category}
-                        onChange={e => setEditingGalleryItem({ ...editingGalleryItem, category: e.target.value as any })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                      >
-                        <option value="Styling">Styling</option>
-                        <option value="Braids & Twists">Braids & Twists</option>
-                        <option value="Glam Makeup">Glam Makeup</option>
-                        <option value="Color">Color</option>
-                        <option value="Interior">Interior</option>
-                        <option value="Bridal">Bridal</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Image URL
-                      </label>
-                      <input
-                        type="url"
-                        required
-                        value={editingGalleryItem.imageUrl}
-                        onChange={e => setEditingGalleryItem({ ...editingGalleryItem, imageUrl: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none font-mono text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={editingGalleryItem.description}
-                      onChange={e => setEditingGalleryItem({ ...editingGalleryItem, description: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="pt-2 flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setEditingGalleryItem(null)}
-                      className="px-4 py-2 bg-stone-800 text-stone-300 text-xs font-semibold uppercase rounded hover:bg-stone-700"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-6 py-2 bg-[#C5A065] text-stone-950 text-xs font-semibold uppercase tracking-wider rounded hover:bg-[#B08955]"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
-                </form>
-              )}
-
               {/* Gallery Grid Display */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {filteredGallery.map(item => (
-                  <div
-                    key={item.id}
-                    className="bg-stone-900 border border-stone-800 rounded overflow-hidden hover:border-stone-700 transition-all flex flex-col justify-between group"
-                  >
-                    <div>
-                      <div className="relative h-48 w-full bg-stone-950 overflow-hidden">
-                        <img
-                          src={item.imageUrl}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <span className="absolute top-2 right-2 bg-stone-950/80 text-[#C5A065] text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded backdrop-blur-xs">
-                          {item.category}
-                        </span>
-                      </div>
-
-                      <div className="p-4">
-                        <h4 className="font-serif text-base text-white font-medium mb-1">
-                          {item.title}
-                        </h4>
-                        <p className="text-xs text-stone-400 leading-relaxed">
-                          {item.description || 'No description added.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-3 border-t border-stone-800 bg-stone-900/50 flex justify-end gap-2">
-                      <button
-                        onClick={() => setEditingGalleryItem(item)}
-                        className="px-3 py-1.5 bg-stone-800 text-stone-200 hover:bg-[#C5A065] hover:text-stone-950 text-xs font-medium rounded transition-colors flex items-center gap-1"
-                      >
-                        <Icon name="solar:pen-2-linear" />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteGalleryItem(item.id, item.title)}
-                        className="px-3 py-1.5 bg-red-950/40 border border-red-900/50 text-red-300 hover:bg-red-900/80 hover:text-white text-xs font-medium rounded transition-colors flex items-center gap-1"
-                      >
-                        <Icon name="solar:trash-bin-trash-linear" />
-                        <span>Delete</span>
-                      </button>
-                    </div>
+              {filteredGallery.length === 0 ? (
+                <div className="p-12 text-center bg-stone-900/40 border border-stone-800 rounded-lg space-y-3">
+                  <div className="w-14 h-14 mx-auto rounded-full bg-stone-800 flex items-center justify-center text-[#C5A065]">
+                    <Icon name="solar:gallery-linear" className="text-2xl" />
                   </div>
-                ))}
-              </div>
+                  <h4 className="text-stone-200 font-medium">No photos found in this category</h4>
+                  <p className="text-xs text-stone-400 max-w-md mx-auto">
+                    Add new looks from your computer or using image URLs to showcase your best styling work.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingGalleryItem(null);
+                      setIsAddingGallery(true);
+                    }}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#C5A065] text-stone-950 text-xs font-semibold rounded uppercase tracking-wider hover:bg-[#B08955] transition-colors"
+                  >
+                    <Icon name="solar:add-circle-linear" />
+                    <span>Upload First Photo</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {filteredGallery.map(item => (
+                    <div
+                      key={item.id}
+                      className="bg-stone-900 border border-stone-800 rounded-lg overflow-hidden hover:border-[#C5A065]/50 transition-all flex flex-col justify-between group shadow-sm"
+                    >
+                      <div>
+                        <div className="relative h-52 w-full bg-stone-950 overflow-hidden">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560869713-7d0a29430803?q=80&w=2002&auto=format&fit=crop';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-black/20" />
+                          <span className="absolute top-2.5 right-2.5 bg-stone-950/85 text-[#C5A065] text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-xs border border-stone-700/50 shadow">
+                            {item.category}
+                          </span>
+                          {item.imageUrl.startsWith('data:image') && (
+                            <span className="absolute top-2.5 left-2.5 bg-emerald-950/85 text-emerald-300 border border-emerald-800/50 text-[9px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-xs">
+                              <Icon name="solar:upload-track-2-linear" className="text-[10px]" />
+                              <span>Local Upload</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="p-4 space-y-1.5">
+                          <h4 className="font-serif text-base text-white font-medium group-hover:text-[#C5A065] transition-colors">
+                            {item.title}
+                          </h4>
+                          <p className="text-xs text-stone-400 leading-relaxed line-clamp-2">
+                            {item.description || 'No description added.'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-3 border-t border-stone-800/80 bg-stone-950/40 flex justify-end gap-2">
+                        <button
+                          type="button"
+                          id={`edit-gallery-${item.id}`}
+                          onClick={() => {
+                            setEditingGalleryItem(item);
+                            setIsAddingGallery(false);
+                          }}
+                          className="px-3 py-1.5 bg-stone-800 text-stone-200 hover:bg-[#C5A065] hover:text-stone-950 text-xs font-medium rounded transition-colors flex items-center gap-1 cursor-pointer"
+                          title="Edit this gallery photo (change photo, url, or description)"
+                        >
+                          <Icon name="solar:pen-2-linear" className="text-sm" />
+                          <span>Edit Photo</span>
+                        </button>
+                        <button
+                          type="button"
+                          id={`delete-gallery-${item.id}`}
+                          onClick={() => handleDeleteGalleryItem(item.id, item.title)}
+                          className="px-3 py-1.5 bg-red-950/30 border border-red-900/40 text-red-300 hover:bg-red-900 hover:text-white text-xs font-medium rounded transition-colors flex items-center gap-1 cursor-pointer"
+                          title="Delete photo from gallery"
+                        >
+                          <Icon name="solar:trash-bin-trash-linear" className="text-sm" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
             </div>
           )}
@@ -1562,6 +1401,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
       </div>
+
+      {/* Modern Add / Edit Gallery Photo Modal */}
+      <GalleryPhotoModal
+        isOpen={isAddingGallery || !!editingGalleryItem}
+        itemToEdit={editingGalleryItem}
+        onClose={() => {
+          setIsAddingGallery(false);
+          setEditingGalleryItem(null);
+        }}
+        onSave={handleSaveGalleryPhoto}
+      />
     </div>
   );
 };
