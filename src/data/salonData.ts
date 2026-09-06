@@ -118,49 +118,52 @@ export const SERVICES_DATA: ServiceItem[] = [
 
 export const GALLERY_DATA: GalleryItem[] = [
   {
-    id: 'gallery-1',
-    title: 'Master Haircuts & Styles',
-    category: 'Cutting',
-    imageUrl: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
-    description: 'Precision haircut with razor texturizing and blowout by Frank Commisso.'
+    "title": "Master Haircuts & Styles",
+    "category": "Cutting",
+    "imageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA5281.jpg?updatedAt=1788633443471",
+    "heightClass": "h-auto",
+    "description": "Precision haircut with razor texturizing and blowout by Frank Commisso.",
+    "id": "gallery-1"
   },
   {
-    id: 'gallery-2',
-    title: 'Dimensional Golden Balayage',
-    category: 'Color',
-    imageUrl: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1780&auto=format&fit=crop',
-    heightClass: 'h-80',
-    description: 'Seamless balayage blending with bright face-framing money piece.'
+    "title": "Dimensional Golden Balayage",
+    "category": "Color",
+    "imageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA2898.jpg?updatedAt=1788633444039",
+    "heightClass": "h-80",
+    "description": "Seamless balayage blending with bright face-framing money piece.",
+    "id": "gallery-2"
   },
   {
-    id: 'gallery-3',
-    title: 'Bridal Updo Perfection',
-    category: 'Bridal',
-    imageUrl: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1978&auto=format&fit=crop',
-    heightClass: 'h-64',
-    description: 'Elegant formal updo designed to hold effortlessly all day and night.'
+    "title": "Bridal Updo Perfection",
+    "category": "Bridal",
+    "imageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA2724.jpg?updatedAt=1788633443808",
+    "heightClass": "h-64",
+    "description": "Elegant formal updo designed to hold effortlessly all day and night.",
+    "id": "gallery-3"
   },
   {
-    id: 'gallery-4',
-    title: 'Vivid Creative Color',
-    category: 'Color',
-    imageUrl: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=2069&auto=format&fit=crop',
-    description: 'Deep plum and vivid violet creative color with glossy protective finish.'
+    "title": "Vivid Creative Color",
+    "category": "Color",
+    "imageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA2057.jpg?updatedAt=1788633443775",
+    "heightClass": "h-auto",
+    "description": "Deep plum and vivid violet creative color with glossy protective finish.",
+    "id": "gallery-4"
   },
   {
-    id: 'gallery-5',
-    title: 'Green Circle Sustainable Salon',
-    category: 'Interior',
-    imageUrl: 'https://images.unsplash.com/photo-1605980776566-0486c3ac7617?q=80&w=2059&auto=format&fit=crop',
-    heightClass: 'h-72',
-    description: 'Our eco-friendly salon at 565 Dundas St, Woodstock, diverting 95% of beauty waste.'
+    "title": "Green Circle Sustainable Salon",
+    "category": "Interior",
+    "imageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg",
+    "heightClass": "h-72",
+    "description": "Our eco-friendly salon at 565 Dundas St, Woodstock, diverting 95% of beauty waste.",
+    "id": "gallery-5"
   },
   {
-    id: 'gallery-6',
-    title: "Men's Precision Cut & Fade",
-    category: 'Grooming',
-    imageUrl: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop',
-    description: 'Sharp fade haircut with specialized black conditioning treatment for extra gloss.'
+    "title": "Men's Precision Cut & Fade",
+    "category": "Grooming",
+    "imageUrl": "https://ik.imagekit.io/kevfun/pinterest_650136896255292073_1788628185999.jpg?updatedAt=1788634380799",
+    "heightClass": "h-auto",
+    "description": "Sharp fade haircut with specialized black conditioning treatment for extra gloss.",
+    "id": "gallery-6"
   }
 ];
 

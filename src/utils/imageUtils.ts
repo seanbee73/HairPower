@@ -3,6 +3,45 @@
  * Resizes high-resolution images to an optimal web resolution (max 1280px)
  * and compresses to JPEG data URL to preserve browser storage and guarantee smooth rendering.
  */
+
+export const FALLBACK_GALLERY_IMAGE = 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop';
+
+/**
+ * Normalizes an image URL to ensure compatibility across Vite, GitHub, Vercel, and Netlify.
+ * Fixes common path issues:
+ * - "public/foo.jpg" -> "/foo.jpg" (Vite serves files in public/ at the root)
+ * - "assets/foo.jpg" -> "/assets/foo.jpg" (ensures leading slash for routing)
+ * - Empty or invalid URLs -> fallback image
+ */
+export function normalizeImageUrl(url?: string): string {
+  if (!url || typeof url !== 'string' || !url.trim()) {
+    return FALLBACK_GALLERY_IMAGE;
+  }
+
+  const trimmed = url.trim();
+
+  // If already a full URL or data URI, return as-is
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:image/')) {
+    return trimmed;
+  }
+
+  // Fix "public/" prefix (Vite serves public directory from root '/')
+  if (trimmed.startsWith('public/')) {
+    return '/' + trimmed.replace(/^public\//, '');
+  }
+
+  if (trimmed.startsWith('./public/')) {
+    return '/' + trimmed.replace(/^\.\/public\//, '');
+  }
+
+  // Ensure leading slash for root-relative paths
+  if (!trimmed.startsWith('/') && !trimmed.startsWith('./')) {
+    return '/' + trimmed;
+  }
+
+  return trimmed;
+}
+
 export async function compressAndReadFile(
   file: File,
   maxWidth = 1280,
@@ -86,3 +125,4 @@ export function formatBytes(bytes: number, decimals = 1): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+

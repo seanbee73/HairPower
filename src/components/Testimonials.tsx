@@ -44,6 +44,7 @@ export const Testimonials: React.FC = () => {
                   <img
                     src={item.avatar}
                     alt={item.name}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                 </div>

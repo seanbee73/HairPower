@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { GalleryItem } from '../types';
 import { Icon } from './Icon';
-import { compressAndReadFile, formatBytes } from '../utils/imageUtils';
+import { compressAndReadFile, formatBytes, normalizeImageUrl, FALLBACK_GALLERY_IMAGE } from '../utils/imageUtils';
 
 interface GalleryPhotoModalProps {
   isOpen: boolean;
@@ -162,7 +162,7 @@ export const GalleryPhotoModal: React.FC<GalleryPhotoModalProps> = ({
       {
         title: title.trim(),
         category,
-        imageUrl: imageUrl.trim(),
+        imageUrl: normalizeImageUrl(imageUrl.trim()),
         heightClass,
         description: description.trim()
       },
@@ -343,12 +343,12 @@ export const GalleryPhotoModal: React.FC<GalleryPhotoModalProps> = ({
               <div className="space-y-3">
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                    Image Direct URL (Unsplash, Cloudinary, Imgur, or direct link) *
+                    Image Web URL or Project Path (e.g., https://... or /assets/photo.jpg) *
                   </label>
                   <div className="flex gap-2">
                     <input
-                      type="url"
-                      placeholder="https://images.unsplash.com/..."
+                      type="text"
+                      placeholder="https://images.unsplash.com/... or /assets/hair-cut.jpg"
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       className="flex-1 px-3.5 py-2.5 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded-lg focus:border-[#C5A065] focus:outline-none font-mono text-xs"
@@ -357,7 +357,7 @@ export const GalleryPhotoModal: React.FC<GalleryPhotoModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setImageUrl('')}
-                        className="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded-lg"
+                        className="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded-lg cursor-pointer"
                         title="Clear URL"
                       >
                         Clear
@@ -366,11 +366,16 @@ export const GalleryPhotoModal: React.FC<GalleryPhotoModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 bg-stone-950/60 border border-stone-800 rounded-lg text-xs text-stone-400 flex items-center gap-2">
-                  <Icon name="solar:info-circle-linear" className="text-base text-[#C5A065] shrink-0" />
-                  <span>
-                    Tip: You can paste high-resolution photo links from Unsplash, Instagram CDNs, Google Drive, or any image hosting provider.
-                  </span>
+                <div className="p-3 bg-stone-950/60 border border-stone-800 rounded-lg text-xs text-stone-400 flex items-start gap-2.5">
+                  <Icon name="solar:info-circle-linear" className="text-base text-[#C5A065] shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p>
+                      <strong>Vercel & Netlify Tip:</strong> You can paste hosted image URLs (Unsplash, Cloudinary, Imgur) or local paths from your repo (e.g. <code className="text-stone-300 bg-stone-900 px-1 py-0.5 rounded">/assets/photo.jpg</code> placed in <code className="text-stone-300 bg-stone-900 px-1 py-0.5 rounded">public/assets/</code>).
+                    </p>
+                    <p className="text-[11px] text-stone-500">
+                      Auto-normalizes <code className="text-stone-400">public/assets/...</code> to <code className="text-stone-400">/assets/...</code> for Vite compatibility.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -508,12 +513,12 @@ export const GalleryPhotoModal: React.FC<GalleryPhotoModalProps> = ({
                 <div className="max-w-sm mx-auto bg-stone-900 border border-stone-700 rounded-lg overflow-hidden shadow-xl">
                   <div className="relative h-44 w-full bg-stone-950 overflow-hidden">
                     <img
-                      src={imageUrl}
+                      src={normalizeImageUrl(imageUrl)}
                       alt={title || 'Preview'}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop';
+                        (e.target as HTMLImageElement).src = FALLBACK_GALLERY_IMAGE;
                       }}
                     />
                     <span className="absolute top-2 right-2 bg-stone-950/85 text-[#C5A065] text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded backdrop-blur-xs">

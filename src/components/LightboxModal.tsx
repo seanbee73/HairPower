@@ -1,6 +1,7 @@
 import React from 'react';
 import { GalleryItem } from '../types';
 import { Icon } from './Icon';
+import { normalizeImageUrl, FALLBACK_GALLERY_IMAGE } from '../utils/imageUtils';
 
 interface LightboxModalProps {
   item: GalleryItem | null;
@@ -17,7 +18,7 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose, onI
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 text-white/70 hover:text-white bg-black/50 p-2 rounded-full transition-colors"
+          className="absolute top-4 right-4 z-20 text-white/70 hover:text-white bg-black/50 p-2 rounded-full transition-colors cursor-pointer"
           aria-label="Close photo preview"
         >
           <Icon name="solar:close-circle-linear" className="text-2xl" />
@@ -26,8 +27,15 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose, onI
         {/* Photo view */}
         <div className="md:w-3/5 bg-black flex items-center justify-center min-h-[300px] md:min-h-[480px]">
           <img
-            src={item.imageUrl}
+            src={normalizeImageUrl(item.imageUrl)}
             alt={item.title}
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== FALLBACK_GALLERY_IMAGE) {
+                target.src = FALLBACK_GALLERY_IMAGE;
+              }
+            }}
             className="max-h-[70vh] w-full object-contain"
           />
         </div>

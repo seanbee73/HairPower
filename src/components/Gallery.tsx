@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GalleryItem } from '../types';
 import { Icon } from './Icon';
+import { normalizeImageUrl, FALLBACK_GALLERY_IMAGE } from '../utils/imageUtils';
 
 interface GalleryProps {
   gallery: GalleryItem[];
@@ -45,7 +46,7 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery, onSelectGalleryItem }
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium uppercase tracking-wider transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
                 activeCategory === cat
                   ? 'bg-[#1C1917] dark:bg-[#C5A065] text-[#C5A065] dark:text-stone-950 font-semibold shadow-sm'
                   : 'text-stone-500 dark:text-stone-400 hover:text-[#1C1917] dark:hover:text-stone-100 hover:bg-stone-200/50 dark:hover:bg-stone-900'
@@ -62,13 +63,22 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery, onSelectGalleryItem }
             <div
               key={item.id}
               onClick={() => onSelectGalleryItem(item)}
-              className={`break-inside-avoid relative group overflow-hidden cursor-pointer rounded-sm shadow-md reveal-on-scroll is-visible ${
+              className={`break-inside-avoid relative group overflow-hidden cursor-pointer rounded-sm shadow-md reveal-on-scroll is-visible bg-stone-900 ${
                 idx % 3 === 1 ? 'reveal-delay-100' : idx % 3 === 2 ? 'reveal-delay-200' : ''
               }`}
             >
               <img
-                src={item.imageUrl}
+                src={normalizeImageUrl(item.imageUrl)}
                 alt={item.title}
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (target.src !== FALLBACK_GALLERY_IMAGE) {
+                    target.src = FALLBACK_GALLERY_IMAGE;
+                  }
+                }}
                 className={`w-full ${item.heightClass || 'h-auto'} object-cover transition-transform duration-700 group-hover:scale-110`}
               />
               <div className="absolute inset-0 bg-[#1C1917]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">

@@ -15,6 +15,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking, salonInfo }) => {
         <img
           src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop"
           alt={`${salonInfo.name} Eco-Friendly Salon Woodstock`}
+          referrerPolicy="no-referrer"
           className="w-full h-full object-cover"
         />
       </div>

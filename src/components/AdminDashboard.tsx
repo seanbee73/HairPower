@@ -112,6 +112,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [importJsonText, setImportJsonText] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
 
+  // --- GitHub / Vercel / Netlify Sync & Code Export Modals ---
+  const [showDeployGuideModal, setShowDeployGuideModal] = useState(false);
+  const [codeModalData, setCodeModalData] = useState<{ title: string; subtitle: string; code: string; filename: string } | null>(null);
+  const [copiedCodeToast, setCopiedCodeToast] = useState(false);
+
   if (!isOpen) return null;
 
   const showNotification = (msg: string) => {
@@ -223,6 +228,132 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       onUpdateGallery(filtered);
       showNotification(`Photo "${title}" deleted.`);
     }
+  };
+
+  // --- Handlers: TypeScript Source Code Generation for GitHub / Vercel / Netlify ---
+  const generateSalonDataTsCode = () => {
+    return `import { SalonInfo, ServiceItem, GalleryItem, Testimonial } from '../types';
+
+export const SALON_INFO: SalonInfo = ${JSON.stringify(salonInfo, null, 2)};
+
+export const SERVICES_DATA: ServiceItem[] = ${JSON.stringify(services, null, 2)};
+
+export const GALLERY_DATA: GalleryItem[] = ${JSON.stringify(gallery, null, 2)};
+
+export const TESTIMONIALS_DATA: Testimonial[] = [
+  {
+    id: 'test-1',
+    name: 'Mary Parent',
+    role: 'Woodstock Client (8 Reviews)',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=250&auto=format&fit=crop',
+    quote: '"FRANK IS AMAZING! MY HAIR HAS NEVER LOOKED SO GREAT AND HEALTHY! HE IS VERY TALENTED AND PROFESSIONAL!"',
+    rating: 5,
+    date: '4 months ago'
+  },
+  {
+    id: 'test-2',
+    name: 'Louise Masters',
+    role: 'Mother of the Bride',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=250&auto=format&fit=crop',
+    quote: '"I had such a wonderful experience having my hair done by Frank for my daughter\\'s wedding. He did a phenomenal job with my hair, very stylish, trendy, and it held all day and night. I can\\'t thank him enough!"',
+    rating: 5,
+    date: '1 year ago'
+  },
+  {
+    id: 'test-3',
+    name: 'Krysia Hawke',
+    role: 'Local Guide',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop',
+    quote: '"I have had my hair cut twice here now and both times have been a lovely experience. I really like that they are a sustainable salon! 10/10 will continue to come here to get my hair cut!"',
+    rating: 5,
+    date: '3 years ago'
+  },
+  {
+    id: 'test-4',
+    name: 'Deb D.',
+    role: 'Satisfied Client',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=250&auto=format&fit=crop',
+    quote: '"Frank understands hair! He is truly talented with his various tools of the trade, and I always leave his shop very happy with the cut I asked for."',
+    rating: 5,
+    date: '1 month ago'
+  }
+];
+
+export const INITIAL_INQUIRIES: import('../types').CustomerInquiry[] = [
+  {
+    id: 'inq-1',
+    referenceCode: 'HP-842910',
+    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    type: 'booking',
+    fullName: 'Sarah Jenkins',
+    email: 'sarah.jenkins@gmail.com',
+    phone: '(519) 788-3412',
+    serviceId: 'balayage-color',
+    serviceTitle: 'Dimensional Balayage & Foil',
+    preferredDate: '2025-05-14',
+    preferredTime: '2:00 PM',
+    notes: 'Would like subtle golden blonde tones for summer. Hair length is past shoulders.',
+    status: 'New'
+  },
+  {
+    id: 'inq-2',
+    referenceCode: 'HP-739102',
+    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+    type: 'booking',
+    fullName: 'Robert MacLeod',
+    email: 'r.macleod@rogers.com',
+    phone: '(519) 539-1184',
+    serviceId: 'mens-grooming',
+    serviceTitle: "Men's Cut & Grooming",
+    preferredDate: '2025-05-12',
+    preferredTime: '11:00 AM',
+    notes: 'Fade haircut and beard line-up.',
+    status: 'Confirmed',
+    staffNotes: 'Confirmed via phone on May 8. Frank assigned.'
+  }
+];
+`;
+  };
+
+  const generateGalleryDataOnlyCode = () => {
+    return `export const GALLERY_DATA: GalleryItem[] = ${JSON.stringify(gallery, null, 2)};`;
+  };
+
+  const handleDownloadSalonDataTs = () => {
+    const code = generateSalonDataTsCode();
+    const blob = new Blob([code], { type: 'text/typescript;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'salonData.ts';
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('Downloaded salonData.ts file ready for your src/data/ folder!');
+  };
+
+  const handleOpenCodeModal = (type: 'all' | 'gallery') => {
+    if (type === 'gallery') {
+      setCodeModalData({
+        title: 'Export GALLERY_DATA Code',
+        subtitle: 'Copy and replace the GALLERY_DATA constant in src/data/salonData.ts, then git commit & push.',
+        code: generateGalleryDataOnlyCode(),
+        filename: 'src/data/salonData.ts (GALLERY_DATA section)'
+      });
+    } else {
+      setCodeModalData({
+        title: 'Complete salonData.ts Source Code',
+        subtitle: 'Copy and replace the full contents of src/data/salonData.ts in your project repository.',
+        code: generateSalonDataTsCode(),
+        filename: 'src/data/salonData.ts'
+      });
+    }
+  };
+
+  const handleCopyCodeToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCodeToast(true);
+    setTimeout(() => setCopiedCodeToast(false), 3000);
+    showNotification('Code copied to clipboard!');
   };
 
   // --- Handlers: JSON Backup ---
@@ -1086,6 +1217,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {activeTab === 'gallery' && (
             <div className="space-y-6 animate-fadeIn">
               
+              {/* GitHub / Vercel / Netlify Sync Notice Card */}
+              <div className="p-4 bg-gradient-to-r from-stone-900 via-[#1C1917] to-stone-900 border border-[#C5A065]/40 rounded-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-[#C5A065]/10 rounded border border-[#C5A065]/30 text-[#C5A065] shrink-0 mt-0.5">
+                    <Icon name="solar:cloud-upload-linear" className="text-xl" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-semibold text-stone-100">
+                        Deploying Updated Photos to Vercel or Netlify?
+                      </h4>
+                      <span className="text-[10px] font-bold bg-[#C5A065] text-stone-950 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Important
+                      </span>
+                    </div>
+                    <p className="text-xs text-stone-400 mt-0.5">
+                      Changes made in the browser are saved to local storage. To display on your live Vercel/Netlify site for all visitors, export the code into <code className="text-stone-300 bg-stone-950 px-1 py-0.5 rounded">src/data/salonData.ts</code> and push to GitHub.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 w-full md:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenCodeModal('gallery')}
+                    className="px-3 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold rounded flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Export GALLERY_DATA for salonData.ts"
+                  >
+                    <Icon name="solar:copy-linear" />
+                    <span>Copy Code</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDownloadSalonDataTs}
+                    className="px-3 py-2 bg-[#C5A065] hover:bg-[#B08955] text-stone-950 text-xs font-bold rounded flex items-center gap-1.5 transition-colors cursor-pointer shadow"
+                    title="Download updated salonData.ts file"
+                  >
+                    <Icon name="solar:download-linear" />
+                    <span>Download salonData.ts</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowDeployGuideModal(true)}
+                    className="px-2.5 py-2 bg-stone-900 border border-stone-700 hover:border-stone-500 text-stone-300 hover:text-white text-xs rounded transition-colors cursor-pointer"
+                    title="Read deployment instructions"
+                  >
+                    <Icon name="solar:question-circle-linear" className="text-base" />
+                  </button>
+                </div>
+              </div>
+
               {/* Category Filter & Add Button */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-900/60 p-4 border border-stone-800 rounded-lg">
                 <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
@@ -1095,7 +1277,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <button
                         key={cat}
                         onClick={() => setGalleryCategoryFilter(cat)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-full uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
                           galleryCategoryFilter === cat
                             ? 'bg-[#C5A065] text-stone-950 font-bold shadow-sm'
                             : 'bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-700/80'
@@ -1222,22 +1404,85 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {activeTab === 'data' && (
             <div className="max-w-3xl mx-auto space-y-6 animate-fadeIn">
               
+              {/* Vercel & Netlify GitHub Code Sync Card */}
+              <div className="p-6 bg-gradient-to-br from-stone-900 via-[#1C1917] to-stone-900 border border-[#C5A065]/50 rounded-lg space-y-4 shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2.5 bg-[#C5A065]/10 rounded border border-[#C5A065]/30 text-[#C5A065] shrink-0">
+                      <Icon name="solar:server-square-linear" className="text-2xl" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg text-[#C5A065] font-medium flex items-center gap-2">
+                        <span>Deploy to Vercel & Netlify (GitHub Source Code Sync)</span>
+                      </h3>
+                      <p className="text-xs text-stone-400 mt-1">
+                        Export your live browser edits directly into your repository source code so that all visitors on Vercel and Netlify see your updated gallery photos and salon information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenCodeModal('all')}
+                    className="p-3 bg-stone-950 hover:bg-stone-800 border border-stone-700 hover:border-[#C5A065] rounded-lg text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 text-[#C5A065] text-xs font-bold uppercase tracking-wider mb-1">
+                      <Icon name="solar:copy-linear" className="text-base" />
+                      <span>Copy Full Code</span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 group-hover:text-stone-300">
+                      View and copy complete <code className="text-stone-300">src/data/salonData.ts</code>
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDownloadSalonDataTs}
+                    className="p-3 bg-stone-950 hover:bg-stone-800 border border-stone-700 hover:border-[#C5A065] rounded-lg text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 text-[#C5A065] text-xs font-bold uppercase tracking-wider mb-1">
+                      <Icon name="solar:download-minimalistic-linear" className="text-base" />
+                      <span>Download File</span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 group-hover:text-stone-300">
+                      Download <code className="text-stone-300">salonData.ts</code> ready to drop into <code className="text-stone-300">src/data/</code>
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowDeployGuideModal(true)}
+                    className="p-3 bg-stone-950 hover:bg-stone-800 border border-stone-700 hover:border-[#C5A065] rounded-lg text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 text-stone-200 text-xs font-bold uppercase tracking-wider mb-1">
+                      <Icon name="solar:book-linear" className="text-base text-[#C5A065]" />
+                      <span>Step-by-Step Guide</span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 group-hover:text-stone-300">
+                      Learn how images, GitHub, and Vercel/Netlify builds work
+                    </p>
+                  </button>
+                </div>
+              </div>
+
               {/* Backup / Export Box */}
               <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-4">
                 <div className="flex items-center justify-between border-b border-stone-800 pb-3">
                   <div>
                     <h3 className="font-serif text-lg text-[#C5A065] font-medium flex items-center gap-2">
                       <Icon name="solar:file-download-linear" />
-                      <span>Export Data Backup</span>
+                      <span>Export Data Backup (JSON)</span>
                     </h3>
                     <p className="text-xs text-stone-400">
-                      Download a JSON file of your current salon info, menu, and gallery.
+                      Download a raw JSON snapshot of your current salon info, menu, and gallery.
                     </p>
                   </div>
 
                   <button
                     onClick={handleExportJson}
-                    className="px-4 py-2 bg-[#C5A065] text-stone-950 hover:bg-[#B08955] text-xs font-semibold uppercase tracking-wider rounded transition-all flex items-center gap-1.5 shadow"
+                    className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 hover:text-white text-xs font-semibold uppercase tracking-wider rounded transition-all flex items-center gap-1.5 shadow cursor-pointer"
                   >
                     <Icon name="solar:download-minimalistic-linear" className="text-base" />
                     <span>Download JSON</span>
@@ -1273,7 +1518,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   onClick={handleImportJson}
                   disabled={!importJsonText.trim()}
-                  className="w-full py-2.5 bg-stone-800 text-stone-200 hover:bg-[#C5A065] hover:text-stone-950 disabled:opacity-50 text-xs font-semibold uppercase tracking-wider rounded transition-colors"
+                  className="w-full py-2.5 bg-stone-800 text-stone-200 hover:bg-[#C5A065] hover:text-stone-950 disabled:opacity-50 text-xs font-semibold uppercase tracking-wider rounded transition-colors cursor-pointer"
                 >
                   Apply Imported JSON
                 </button>
@@ -1295,7 +1540,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       showNotification('All salon data reset to factory defaults.');
                     }
                   }}
-                  className="px-4 py-2 bg-red-900/80 text-white hover:bg-red-800 text-xs font-semibold uppercase tracking-wider rounded transition-colors"
+                  className="px-4 py-2 bg-red-900/80 text-white hover:bg-red-800 text-xs font-semibold uppercase tracking-wider rounded transition-colors cursor-pointer"
                 >
                   Reset Factory Defaults
                 </button>
@@ -1324,6 +1569,153 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         }}
         onSave={handleSaveGalleryPhoto}
       />
+
+      {/* GitHub & Vercel / Netlify Deployment Guide Modal */}
+      {showDeployGuideModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/85 backdrop-blur-md animate-fadeIn">
+          <div className="max-w-2xl w-full bg-stone-900 border border-[#C5A065]/40 rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 bg-stone-950 border-b border-stone-800 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[#C5A065]/10 rounded border border-[#C5A065]/30 text-[#C5A065]">
+                  <Icon name="solar:cloud-upload-bold" className="text-2xl" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-lg text-white font-medium">
+                    Why Images on Vercel & Netlify Need Code Sync
+                  </h3>
+                  <p className="text-xs text-stone-400">
+                    How data flows between your browser, GitHub, and your hosting provider
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDeployGuideModal(false)}
+                className="p-1.5 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+              >
+                <Icon name="solar:close-circle-linear" className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 overflow-y-auto text-xs text-stone-300 leading-relaxed">
+              <div className="p-4 bg-stone-950/80 border border-stone-800 rounded-lg space-y-2">
+                <h4 className="font-semibold text-[#C5A065] text-sm flex items-center gap-2">
+                  <Icon name="solar:lightbulb-bolt-bold" />
+                  <span>The Root Cause</span>
+                </h4>
+                <p>
+                  When you edit or upload photos using this admin panel, your browser saves them in <strong>localStorage</strong> on your current device. When Vercel or Netlify builds your website, it builds directly from the source code file at <code className="text-[#C5A065] bg-stone-900 px-1 py-0.5 rounded font-mono">src/data/salonData.ts</code>.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-semibold text-white text-sm uppercase tracking-wider">
+                  3 Easy Steps to Sync Images to Vercel & Netlify:
+                </h4>
+
+                <div className="p-3 bg-stone-950/40 border border-stone-800 rounded-lg space-y-1.5">
+                  <span className="font-bold text-[#C5A065] text-xs">Step 1. Export Updated Code</span>
+                  <p className="text-stone-400">
+                    Click <strong>"Download salonData.ts"</strong> or <strong>"Copy Full Code"</strong> in the Backup & Export tab.
+                  </p>
+                </div>
+
+                <div className="p-3 bg-stone-950/40 border border-stone-800 rounded-lg space-y-1.5">
+                  <span className="font-bold text-[#C5A065] text-xs">Step 2. Place Local Images in the Public Folder (Optional)</span>
+                  <p className="text-stone-400">
+                    If you used custom image files from your computer, put the image files inside your repository's <code className="text-stone-200 font-mono">public/assets/</code> directory (e.g. <code className="text-stone-200 font-mono">public/assets/new-look.jpg</code>), and reference them as <code className="text-stone-200 font-mono">/assets/new-look.jpg</code> in the code. Or use direct hosted URLs (Unsplash, Cloudinary, Imgur).
+                  </p>
+                </div>
+
+                <div className="p-3 bg-stone-950/40 border border-stone-800 rounded-lg space-y-1.5">
+                  <span className="font-bold text-[#C5A065] text-xs">Step 3. Commit & Push to GitHub</span>
+                  <p className="text-stone-400">
+                    Replace your project's <code className="text-stone-200 font-mono">src/data/salonData.ts</code> with the exported code. Run <code className="text-stone-200 font-mono bg-stone-900 px-1 py-0.5 rounded">git add . && git commit -m "Update salon gallery" && git push</code>. Vercel and Netlify will automatically rebuild and your new images will appear instantly for all visitors!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-stone-950 border-t border-stone-800 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeployGuideModal(false);
+                  handleOpenCodeModal('all');
+                }}
+                className="px-4 py-2 bg-[#C5A065] hover:bg-[#B08955] text-stone-950 text-xs font-bold uppercase tracking-wider rounded transition-colors cursor-pointer"
+              >
+                Copy salonData.ts Code Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Code Export Modal */}
+      {codeModalData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/85 backdrop-blur-md animate-fadeIn">
+          <div className="max-w-3xl w-full bg-stone-900 border border-[#C5A065]/40 rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-5 bg-stone-950 border-b border-stone-800 flex items-center justify-between">
+              <div>
+                <h3 className="font-serif text-lg text-[#C5A065] font-medium">
+                  {codeModalData.title}
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Target file: <code className="text-stone-300 font-mono bg-stone-900 px-1 py-0.5 rounded">{codeModalData.filename}</code>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCodeModalData(null)}
+                className="p-1.5 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+              >
+                <Icon name="solar:close-circle-linear" className="text-2xl" />
+              </button>
+            </div>
+
+            <div className="p-4 bg-stone-950/40 border-b border-stone-800 text-xs text-stone-300 flex items-center justify-between">
+              <span>{codeModalData.subtitle}</span>
+              <button
+                type="button"
+                onClick={() => handleCopyCodeToClipboard(codeModalData.code)}
+                className="px-3 py-1.5 bg-[#C5A065] hover:bg-[#B08955] text-stone-950 text-xs font-bold rounded flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 shadow"
+              >
+                <Icon name={copiedCodeToast ? "solar:check-circle-bold" : "solar:copy-linear"} />
+                <span>{copiedCodeToast ? 'Copied!' : 'Copy Code'}</span>
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto flex-1 bg-stone-950">
+              <pre className="text-xs font-mono text-stone-300 whitespace-pre overflow-x-auto p-4 bg-stone-900/80 border border-stone-800 rounded-lg">
+                {codeModalData.code}
+              </pre>
+            </div>
+
+            <div className="p-4 bg-stone-950 border-t border-stone-800 flex justify-between items-center text-xs">
+              <span className="text-stone-500">
+                Ready to paste into your local editor
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleCopyCodeToClipboard(codeModalData.code)}
+                  className="px-4 py-2 bg-[#C5A065] hover:bg-[#B08955] text-stone-950 text-xs font-bold uppercase tracking-wider rounded transition-colors cursor-pointer shadow"
+                >
+                  {copiedCodeToast ? 'Copied to Clipboard!' : 'Copy to Clipboard'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCodeModalData(null)}
+                  className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

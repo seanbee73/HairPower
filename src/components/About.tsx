@@ -19,6 +19,7 @@ export const About: React.FC<AboutProps> = ({ salonInfo }) => {
             <img
               src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop"
               alt={`${salonInfo.name} Team at work`}
+              referrerPolicy="no-referrer"
               className="relative z-10 w-full h-[500px] object-cover shadow-2xl transition-all duration-700 rounded-sm dark:brightness-95"
             />
 
