@@ -22,10 +22,15 @@ export default function App() {
       const saved = localStorage.getItem('hairpower_salon_info') || localStorage.getItem('spencer_salon_info');
       if (saved) {
         const parsed = JSON.parse(saved);
+        let heroImg = parsed.heroImageUrl;
+        // Migrate old Unsplash placeholders to new official Woodstock salon image
+        if (!heroImg || heroImg.includes('photo-1562322140-8baeececf3df') || heroImg.includes('photo-1560066984') || heroImg.includes('photo-1605980776566')) {
+          heroImg = SALON_INFO.heroImageUrl;
+        }
         return {
           ...SALON_INFO,
           ...parsed,
-          heroImageUrl: parsed.heroImageUrl || SALON_INFO.heroImageUrl,
+          heroImageUrl: heroImg || SALON_INFO.heroImageUrl,
           founderImageUrl: parsed.founderImageUrl || SALON_INFO.founderImageUrl
         };
       }
