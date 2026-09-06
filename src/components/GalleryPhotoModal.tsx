@@ -49,7 +49,7 @@ export const HAIR_POWER_GALLERY_PRESETS = [
   {
     title: 'Sustainable Salon Styling Station',
     category: 'Interior' as const,
-    imageUrl: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1605980776566-0486c3ac7617?q=80&w=2059&auto=format&fit=crop',
     description: 'Green Circle certified salon atmosphere at 565 Dundas St, Woodstock.',
     heightClass: 'h-80'
   }

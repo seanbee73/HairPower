@@ -4,53 +4,6 @@ import { Icon } from './Icon';
 import { InquiriesManager } from './InquiriesManager';
 import { AdminAuth } from './AdminAuth';
 import { GalleryPhotoModal } from './GalleryPhotoModal';
-import { PhotoFieldController, PhotoPreset } from './PhotoFieldController';
-
-const HERO_PHOTO_PRESETS: PhotoPreset[] = [
-  {
-    label: 'Woodstock Modern Salon Interior',
-    url: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg',
-    description: 'Clean lit circular mirrors & modern styling stations.'
-  },
-  {
-    label: 'Warm Luxury Stations & Mirrors',
-    url: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?q=80&w=2002&auto=format&fit=crop',
-    description: 'Bright styling atmosphere with elegant ambient glow.'
-  },
-  {
-    label: 'Minimalist Salon Suite',
-    url: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
-    description: 'Crisp contemporary salon aesthetic.'
-  },
-  {
-    label: 'Spa & Treatment Wash Basins',
-    url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=2069&auto=format&fit=crop',
-    description: 'Relaxing hair wash & restorative treatment lounge.'
-  }
-];
-
-const FOUNDER_PHOTO_PRESETS: PhotoPreset[] = [
-  {
-    label: 'Master Stylist at Work (Default)',
-    url: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop',
-    description: 'Stylist precision cutting in modern salon environment.'
-  },
-  {
-    label: 'Precision Barber & Razor Craft',
-    url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop',
-    description: 'Classic razor grooming and precision scissor work.'
-  },
-  {
-    label: 'Italian Heritage Salon Craft',
-    url: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=1978&auto=format&fit=crop',
-    description: '35+ years heritage styling and blowdry perfection.'
-  },
-  {
-    label: 'Creative Color & Balayage Artisan',
-    url: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=2069&auto=format&fit=crop',
-    description: 'Artisan colorist creating dimensional blonde tones.'
-  }
-];
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -140,10 +93,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const [newServiceForm, setNewServiceForm] = useState<Omit<ServiceItem, 'id'>>({
     title: '',
-    price: 'from $45',
-    startingAmount: 45,
+    price: 'from GH₵ 200',
+    startingAmount: 200,
     description: '',
-    details: ['Personalized consultation', 'Signature styling finish'],
+    details: ['Personalized consultation', 'Premium scalp treatment'],
     icon: 'solar:scissors-linear',
     category: 'cutting'
   });
@@ -440,7 +393,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 }`}
               >
                 <Icon name="solar:shop-linear" className="text-base" />
-                <span>2. Salon Info & Featured Photos</span>
+                <span>2. Salon Info & Hours</span>
               </button>
 
               <button
@@ -702,47 +655,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
 
-                {/* Featured Imagery & Photography Controls */}
-                <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-6">
-                  <div className="border-b border-stone-800 pb-3 flex items-center justify-between">
-                    <h3 className="font-serif text-lg text-[#C5A065] flex items-center gap-2">
-                      <Icon name="solar:camera-linear" />
-                      <span>Featured Website Photography & Hero Shots</span>
-                    </h3>
-                    <span className="text-xs text-stone-400">
-                      Edit hero background & founder portrait independently
-                    </span>
-                  </div>
-
-                  {/* 1. Hero Main Background Shot */}
-                  <PhotoFieldController
-                    id="hero-shot-field"
-                    title="1. Homepage Hero Main Background Shot"
-                    subtitle="Displays across the entire full-screen hero section on desktop & mobile."
-                    badge="Hero Banner"
-                    value={infoForm.heroImageUrl || 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg'}
-                    defaultValue="https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg"
-                    aspectRatio="video"
-                    presets={HERO_PHOTO_PRESETS}
-                    onChange={(url) => setInfoForm({ ...infoForm, heroImageUrl: url })}
-                    onNotification={showNotification}
-                  />
-
-                  {/* 2. Lead Stylist & Founder Shot */}
-                  <PhotoFieldController
-                    id="founder-shot-field"
-                    title="2. Lead Stylist & Founder Portrait Shot"
-                    subtitle="Displays in the 'About Us' section next to the salon history & 35-year story."
-                    badge="About Us Showcase"
-                    value={infoForm.founderImageUrl || 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop'}
-                    defaultValue="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop"
-                    aspectRatio="portrait"
-                    presets={FOUNDER_PHOTO_PRESETS}
-                    onChange={(url) => setInfoForm({ ...infoForm, founderImageUrl: url })}
-                    onNotification={showNotification}
-                  />
-                </div>
-
                 <div className="pt-2">
                   <button
                     type="submit"
@@ -837,7 +749,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <input
                         type="text"
                         required
-                        placeholder="e.g. from $48 or $125"
+                        placeholder="e.g. from GH₵ 250"
                         value={newServiceForm.price}
                         onChange={e => setNewServiceForm({ ...newServiceForm, price: e.target.value })}
                         className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
@@ -846,7 +758,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Starting Amount ($ CAD)
+                        Starting Amount (GH₵)
                       </label>
                       <input
                         type="number"
@@ -1024,7 +936,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Starting Amount ($ CAD)
+                        Starting Amount (GH₵)
                       </label>
                       <input
                         type="number"
@@ -1310,65 +1222,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {activeTab === 'data' && (
             <div className="max-w-3xl mx-auto space-y-6 animate-fadeIn">
               
-              {/* GitHub / Vercel / Netlify Deployment Sync Guide */}
-              <div className="p-6 bg-stone-900/80 border border-[#C5A065]/40 rounded-lg space-y-4">
-                <div className="flex items-start gap-3 border-b border-stone-800 pb-3">
-                  <div className="w-10 h-10 rounded-full bg-[#C5A065]/20 text-[#C5A065] flex items-center justify-center shrink-0">
-                    <Icon name="solar:cloud-upload-linear" className="text-xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-base text-[#C5A065] font-medium">
-                      GitHub & Production Deployment Sync
-                    </h3>
-                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
-                      Changes made inside this Admin Portal are stored in your browser's local storage for real-time live preview. When Vercel or Netlify builds your site from GitHub, it uses the static seed files in <code className="text-[#C5A065] bg-stone-950 px-1 py-0.5 rounded">src/data/salonData.ts</code>.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const payload = {
-                        salonInfo,
-                        services,
-                        gallery
-                      };
-                      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-                      showNotification('Copied current configuration JSON to clipboard!');
-                    }}
-                    className="p-3 bg-stone-950 border border-stone-700 hover:border-[#C5A065] rounded text-left transition-colors group flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="text-xs font-medium text-stone-200 group-hover:text-[#C5A065]">
-                        Copy Configuration JSON
-                      </p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">
-                        Copy complete data structure to clipboard
-                      </p>
-                    </div>
-                    <Icon name="solar:copy-linear" className="text-stone-400 group-hover:text-[#C5A065] text-base" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleExportJson}
-                    className="p-3 bg-stone-950 border border-stone-700 hover:border-[#C5A065] rounded text-left transition-colors group flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="text-xs font-medium text-stone-200 group-hover:text-[#C5A065]">
-                        Download Backup File
-                      </p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">
-                        Save .json backup to your computer
-                      </p>
-                    </div>
-                    <Icon name="solar:download-minimalistic-linear" className="text-stone-400 group-hover:text-[#C5A065] text-base" />
-                  </button>
-                </div>
-              </div>
-
               {/* Backup / Export Box */}
               <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-4">
                 <div className="flex items-center justify-between border-b border-stone-800 pb-3">

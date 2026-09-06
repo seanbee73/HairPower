@@ -14,9 +14,7 @@ export const SALON_INFO: SalonInfo = {
   quote: '"Look Great, Feel Empowered. Serving Woodstock & Oxford County for over 35 years."',
   leadStylist: 'Frank Commisso (Master Stylist & Owner)',
   aboutText1: 'Hair Power has been serving Woodstock and the surrounding Oxford County community for over 35 years. As a family-run business, Frank Commisso\'s father, Pino, opened the salon after arriving in Canada from Southern Italy in 1989, and they never looked back.',
-  aboutText2: 'Hair Power has maintained its excellence through loyalty, pride, and a reputation in providing fashion-forward looks to classic styles. As Oxford County\'s premier eco-friendly salon, we proudly partner with Green Circle Salons to recover and repurpose up to 90-95% of daily beauty waste.',
-  heroImageUrl: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg',
-  founderImageUrl: 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop'
+  aboutText2: 'Hair Power has maintained its excellence through loyalty, pride, and a reputation in providing fashion-forward looks to classic styles. As Oxford County\'s premier eco-friendly salon, we proudly partner with Green Circle Salons to recover and repurpose up to 90-95% of daily beauty waste.'
 };
 
 export const SERVICES_DATA: ServiceItem[] = [
@@ -153,7 +151,7 @@ export const GALLERY_DATA: GalleryItem[] = [
     id: 'gallery-5',
     title: 'Green Circle Sustainable Salon',
     category: 'Interior',
-    imageUrl: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1605980776566-0486c3ac7617?q=80&w=2059&auto=format&fit=crop',
     heightClass: 'h-72',
     description: 'Our eco-friendly salon at 565 Dundas St, Woodstock, diverting 95% of beauty waste.'
   },

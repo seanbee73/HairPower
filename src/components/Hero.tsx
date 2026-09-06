@@ -13,7 +13,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking, salonInfo }) => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={salonInfo.heroImageUrl || 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg'}
+          src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop"
           alt={`${salonInfo.name} Eco-Friendly Salon Woodstock`}
           className="w-full h-full object-cover"
         />

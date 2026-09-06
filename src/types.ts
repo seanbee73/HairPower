@@ -13,8 +13,6 @@ export interface SalonInfo {
   leadStylist: string;
   aboutText1: string;
   aboutText2: string;
-  heroImageUrl: string;
-  founderImageUrl: string;
 }
 
 export interface ServiceItem {

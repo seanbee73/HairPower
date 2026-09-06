@@ -20,20 +20,7 @@ export default function App() {
   const [salonInfo, setSalonInfo] = useState<SalonInfo>(() => {
     try {
       const saved = localStorage.getItem('hairpower_salon_info') || localStorage.getItem('spencer_salon_info');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        let heroImg = parsed.heroImageUrl;
-        // Migrate old Unsplash placeholders to new official Woodstock salon image
-        if (!heroImg || heroImg.includes('photo-1562322140-8baeececf3df') || heroImg.includes('photo-1560066984') || heroImg.includes('photo-1605980776566')) {
-          heroImg = SALON_INFO.heroImageUrl;
-        }
-        return {
-          ...SALON_INFO,
-          ...parsed,
-          heroImageUrl: heroImg || SALON_INFO.heroImageUrl,
-          founderImageUrl: parsed.founderImageUrl || SALON_INFO.founderImageUrl
-        };
-      }
+      if (saved) return JSON.parse(saved);
     } catch (e) {
       console.error('Failed to load salon info from localStorage:', e);
     }
@@ -53,15 +40,7 @@ export default function App() {
   const [gallery, setGallery] = useState<GalleryItem[]>(() => {
     try {
       const saved = localStorage.getItem('hairpower_salon_gallery') || localStorage.getItem('spencer_salon_gallery');
-      if (saved) {
-        const parsed: GalleryItem[] = JSON.parse(saved);
-        return parsed.map(item => {
-          if (item.id === 'gallery-5' || item.category === 'Interior' || item.imageUrl.includes('photo-1605980776566-0486c3ac7617')) {
-            return { ...item, imageUrl: 'https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg' };
-          }
-          return item;
-        });
-      }
+      if (saved) return JSON.parse(saved);
     } catch (e) {
       console.error('Failed to load gallery from localStorage:', e);
     }

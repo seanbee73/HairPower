@@ -17,8 +17,8 @@ export const About: React.FC<AboutProps> = ({ salonInfo }) => {
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#1C1917]/5 dark:bg-amber-500/5 z-0"></div>
             
             <img
-              src={salonInfo.founderImageUrl || 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop'}
-              alt={`${salonInfo.leadStylist || salonInfo.name} Hair Power`}
+              src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop"
+              alt={`${salonInfo.name} Team at work`}
               className="relative z-10 w-full h-[500px] object-cover shadow-2xl transition-all duration-700 rounded-sm dark:brightness-95"
             />
 
