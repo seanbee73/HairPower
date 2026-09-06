@@ -140,10 +140,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const [newServiceForm, setNewServiceForm] = useState<Omit<ServiceItem, 'id'>>({
     title: '',
-    price: 'from GH₵ 200',
-    startingAmount: 200,
+    price: 'from $45',
+    startingAmount: 45,
     description: '',
-    details: ['Personalized consultation', 'Premium scalp treatment'],
+    details: ['Personalized consultation', 'Signature styling finish'],
     icon: 'solar:scissors-linear',
     category: 'cutting'
   });
@@ -837,7 +837,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <input
                         type="text"
                         required
-                        placeholder="e.g. from GH₵ 250"
+                        placeholder="e.g. from $48 or $125"
                         value={newServiceForm.price}
                         onChange={e => setNewServiceForm({ ...newServiceForm, price: e.target.value })}
                         className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-sm text-stone-100 rounded focus:border-[#C5A065] focus:outline-none"
@@ -846,7 +846,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Starting Amount (GH₵)
+                        Starting Amount ($ CAD)
                       </label>
                       <input
                         type="number"
@@ -1024,7 +1024,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-stone-400 font-medium mb-1">
-                        Starting Amount (GH₵)
+                        Starting Amount ($ CAD)
                       </label>
                       <input
                         type="number"
@@ -1310,6 +1310,65 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {activeTab === 'data' && (
             <div className="max-w-3xl mx-auto space-y-6 animate-fadeIn">
               
+              {/* GitHub / Vercel / Netlify Deployment Sync Guide */}
+              <div className="p-6 bg-stone-900/80 border border-[#C5A065]/40 rounded-lg space-y-4">
+                <div className="flex items-start gap-3 border-b border-stone-800 pb-3">
+                  <div className="w-10 h-10 rounded-full bg-[#C5A065]/20 text-[#C5A065] flex items-center justify-center shrink-0">
+                    <Icon name="solar:cloud-upload-linear" className="text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-base text-[#C5A065] font-medium">
+                      GitHub & Production Deployment Sync
+                    </h3>
+                    <p className="text-xs text-stone-300 mt-1 leading-relaxed">
+                      Changes made inside this Admin Portal are stored in your browser's local storage for real-time live preview. When Vercel or Netlify builds your site from GitHub, it uses the static seed files in <code className="text-[#C5A065] bg-stone-950 px-1 py-0.5 rounded">src/data/salonData.ts</code>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const payload = {
+                        salonInfo,
+                        services,
+                        gallery
+                      };
+                      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+                      showNotification('Copied current configuration JSON to clipboard!');
+                    }}
+                    className="p-3 bg-stone-950 border border-stone-700 hover:border-[#C5A065] rounded text-left transition-colors group flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-xs font-medium text-stone-200 group-hover:text-[#C5A065]">
+                        Copy Configuration JSON
+                      </p>
+                      <p className="text-[11px] text-stone-400 mt-0.5">
+                        Copy complete data structure to clipboard
+                      </p>
+                    </div>
+                    <Icon name="solar:copy-linear" className="text-stone-400 group-hover:text-[#C5A065] text-base" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportJson}
+                    className="p-3 bg-stone-950 border border-stone-700 hover:border-[#C5A065] rounded text-left transition-colors group flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-xs font-medium text-stone-200 group-hover:text-[#C5A065]">
+                        Download Backup File
+                      </p>
+                      <p className="text-[11px] text-stone-400 mt-0.5">
+                        Save .json backup to your computer
+                      </p>
+                    </div>
+                    <Icon name="solar:download-minimalistic-linear" className="text-stone-400 group-hover:text-[#C5A065] text-base" />
+                  </button>
+                </div>
+              </div>
+
               {/* Backup / Export Box */}
               <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-4">
                 <div className="flex items-center justify-between border-b border-stone-800 pb-3">
