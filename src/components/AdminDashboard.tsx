@@ -754,6 +754,73 @@ export const INITIAL_INQUIRIES: import('../types').CustomerInquiry[] = [
                   </div>
                 </div>
 
+                {/* Hero & Stylist Images Box */}
+                <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-4">
+                  <h3 className="font-serif text-lg text-[#C5A065] flex items-center gap-2 border-b border-stone-800 pb-2">
+                    <Icon name="solar:gallery-wide-linear" />
+                    <span>Hero Banner & Lead Stylist Photos</span>
+                  </h3>
+                  <p className="text-xs text-stone-400">
+                    Customize your main landing hero background photo and the About Us founder/lead stylist profile photo separately.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Hero Background Image */}
+                    <div className="space-y-2">
+                      <label className="block text-xs uppercase tracking-wider text-stone-300 font-medium">
+                        Hero Background Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={infoForm.heroImageUrl || ''}
+                        onChange={e => setInfoForm({ ...infoForm, heroImageUrl: e.target.value })}
+                        placeholder="https://ik.imagekit.io/..."
+                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-xs text-stone-100 rounded focus:border-[#C5A065] focus:outline-none font-mono"
+                      />
+                      {infoForm.heroImageUrl && (
+                        <div className="relative h-28 w-full rounded border border-stone-800 overflow-hidden bg-stone-950">
+                          <img
+                            src={infoForm.heroImageUrl}
+                            alt="Hero preview"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-1 right-1 bg-stone-950/80 text-[#C5A065] text-[10px] px-1.5 py-0.5 rounded font-mono">
+                            Hero Preview
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Lead Stylist / Founder Image */}
+                    <div className="space-y-2">
+                      <label className="block text-xs uppercase tracking-wider text-stone-300 font-medium">
+                        Lead Stylist & Founder Photo URL (About Us)
+                      </label>
+                      <input
+                        type="text"
+                        value={infoForm.founderImageUrl || ''}
+                        onChange={e => setInfoForm({ ...infoForm, founderImageUrl: e.target.value })}
+                        placeholder="https://ik.imagekit.io/..."
+                        className="w-full px-3 py-2 bg-stone-950 border border-stone-700 text-xs text-stone-100 rounded focus:border-[#C5A065] focus:outline-none font-mono"
+                      />
+                      {infoForm.founderImageUrl && (
+                        <div className="relative h-28 w-full rounded border border-stone-800 overflow-hidden bg-stone-950">
+                          <img
+                            src={infoForm.founderImageUrl}
+                            alt="Lead stylist preview"
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-1 right-1 bg-stone-950/80 text-[#C5A065] text-[10px] px-1.5 py-0.5 rounded font-mono">
+                            About Us Photo Preview
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 {/* About Paragraphs */}
                 <div className="p-6 bg-stone-900/60 border border-stone-800 rounded space-y-4">
                   <h3 className="font-serif text-lg text-[#C5A065] flex items-center gap-2 border-b border-stone-800 pb-2">

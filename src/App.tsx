@@ -20,7 +20,15 @@ export default function App() {
   const [salonInfo, setSalonInfo] = useState<SalonInfo>(() => {
     try {
       const saved = localStorage.getItem('hairpower_salon_info') || localStorage.getItem('spencer_salon_info');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...SALON_INFO,
+          ...parsed,
+          heroImageUrl: parsed.heroImageUrl || SALON_INFO.heroImageUrl,
+          founderImageUrl: parsed.founderImageUrl || SALON_INFO.founderImageUrl
+        };
+      }
     } catch (e) {
       console.error('Failed to load salon info from localStorage:', e);
     }

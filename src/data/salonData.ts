@@ -15,7 +15,7 @@ export const SALON_INFO: SalonInfo = {
   "leadStylist": "Frank Commisso (Master Stylist & Owner)",
   "aboutText1": "Hair Power has been serving Woodstock and the surrounding Oxford County community for over 35 years. As a family-run business, Frank Commisso's father, Pino, opened the salon after arriving in Canada from Southern Italy in 1989, and they never looked back.",
   "aboutText2": "Hair Power has maintained its excellence through loyalty, pride, and a reputation in providing fashion-forward looks to classic styles. As Oxford County's premier eco-friendly salon, we proudly partner with Green Circle Salons to recover and repurpose up to 90-95% of daily beauty waste.",
-  "heroImageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA6540.jpg",
+  "heroImageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA0496.jpg?updatedAt=1788633443524",
   "founderImageUrl": "https://ik.imagekit.io/kevfun/IMG-20260905-WA4382.jpg"
 };
 

@@ -1,12 +1,17 @@
 import React from 'react';
 import { Icon } from './Icon';
 import { SalonInfo } from '../types';
+import { normalizeImageUrl } from '../utils/imageUtils';
 
 interface AboutProps {
   salonInfo: SalonInfo;
 }
 
+const DEFAULT_FOUNDER_IMAGE = 'https://ik.imagekit.io/kevfun/IMG-20260905-WA4382.jpg';
+
 export const About: React.FC<AboutProps> = ({ salonInfo }) => {
+  const founderImageSrc = normalizeImageUrl(salonInfo.founderImageUrl || salonInfo.leadStylistImageUrl || DEFAULT_FOUNDER_IMAGE);
+
   return (
     <section id="about" className="py-24 bg-[#FDFBF7] dark:bg-[#0C0A09] transition-colors duration-500 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
@@ -17,9 +22,15 @@ export const About: React.FC<AboutProps> = ({ salonInfo }) => {
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#1C1917]/5 dark:bg-amber-500/5 z-0"></div>
             
             <img
-              src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2070&auto=format&fit=crop"
-              alt={`${salonInfo.name} Team at work`}
+              src={founderImageSrc}
+              alt={`${salonInfo.leadStylist || salonInfo.name} - Hair Power`}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== DEFAULT_FOUNDER_IMAGE) {
+                  target.src = DEFAULT_FOUNDER_IMAGE;
+                }
+              }}
               className="relative z-10 w-full h-[500px] object-cover shadow-2xl transition-all duration-700 rounded-sm dark:brightness-95"
             />
 

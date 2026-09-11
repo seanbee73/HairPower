@@ -1,21 +1,32 @@
 import React from 'react';
 import { Icon } from './Icon';
 import { SalonInfo } from '../types';
+import { normalizeImageUrl } from '../utils/imageUtils';
 
 interface HeroProps {
   onOpenBooking: () => void;
   salonInfo: SalonInfo;
 }
 
+const DEFAULT_HERO_IMAGE = 'https://ik.imagekit.io/kevfun/IMG-20260905-WA0496.jpg?updatedAt=1788633443524';
+
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking, salonInfo }) => {
+  const heroImageSrc = normalizeImageUrl(salonInfo.heroImageUrl || DEFAULT_HERO_IMAGE);
+
   return (
     <section className="relative h-screen min-h-[600px] w-full overflow-hidden flex items-center justify-center">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-stone-950">
         <img
-          src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop"
+          src={heroImageSrc}
           alt={`${salonInfo.name} Eco-Friendly Salon Woodstock`}
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== DEFAULT_HERO_IMAGE) {
+              target.src = DEFAULT_HERO_IMAGE;
+            }
+          }}
           className="w-full h-full object-cover"
         />
       </div>
